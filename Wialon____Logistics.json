@@ -1,0 +1,1222 @@
+{
+  "name": "Wialon  - Logistics",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "6f15c50f-4ab0-4553-a000-89d097632e21",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "408dd437-21c2-442c-b36e-9a8d8786ce87",
+      "name": "Webhook",
+      "webhookId": "6f15c50f-4ab0-4553-a000-89d097632e21"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8e9dd226-443c-417b-9792-6731d46e2ab5",
+              "leftValue": "={{ $json.query['hub.verify_token'] }}",
+              "rightValue": "franco123",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        680,
+        320
+      ],
+      "id": "7597201b-87af-4c57-b5b7-b370bb232cb0",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json[\"query\"][\"hub.challenge\"] }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        900,
+        220
+      ],
+      "id": "987d9799-f893-4b12-9fde-e461fbd55b1f",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"message\": \"Invalid verification token\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        900,
+        420
+      ],
+      "id": "926711c4-c64f-4711-ab45-241a8ba848c4",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "path": "respuesta-tanque",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        460,
+        320
+      ],
+      "id": "551c653a-0d15-4789-9161-6eb283b2e02f",
+      "name": "verify_token",
+      "webhookId": "94b056e0-5168-4dfc-b967-a1a9e38e1980"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "respuesta-tanque",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        200,
+        940
+      ],
+      "id": "cf1c743f-e840-45bd-80de-f99608609a9c",
+      "name": "Approval client",
+      "webhookId": "9b530bac-b647-4810-9502-2149336403d1"
+    },
+    {
+      "parameters": {
+        "url": "=https://hst-api.wialon.com/wialon/ajax.html?svc=token/login&params={\"token\":\"{{ $json['Token Wialon'] }}\",\"fl\":32}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3820,
+        400
+      ],
+      "id": "d690e224-210a-494f-a7a9-64ef1dde09fe",
+      "name": "Session ID"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://hst-api.wialon.com/wialon/ajax.html?svc=order/update&params={\"uid\":0,\"id\":0,\"n\":\"{{ $json['Name of the Order'] }}\",\"p\":{\"n\":\"{{ $json.Client }}\",\"a\":\"{{ $json.Address }}\",\"ut\":600,\"v\":0,\"w\":0,\"c\":0,\"pr\":0},\"f\":1,\"tf\":{{ $json.Beggining }},\"tt\":{{ $json.End }},\"r\":100,\"y\":{{ $json.Latitude }},\"x\":{{ $json.Longitud }},\"itemId\":{{ $('Token  - resource').item.json['RESOURCE ID'] }},\"callMode\":\"create\"}&sid={{ $('Session ID').item.json.eid }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4460,
+        400
+      ],
+      "id": "377e348c-485d-4114-86be-2b5c580abb93",
+      "name": "Creating order"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d486c2a6-708c-47f8-8d34-4f3b58936829",
+              "name": "Token Wialon",
+              "value": "1c4b404e06a303a7f0fec42403c39ab7D15C0DD8BC36B9186251AC14DAE9489FCE84016E",
+              "type": "string"
+            },
+            {
+              "id": "5dc1f61e-87b8-486b-b343-8abd926eb436",
+              "name": "RESOURCE ID",
+              "value": "27371082",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3560,
+        400
+      ],
+      "id": "d50f84d2-c58b-491e-b178-1a47b2a9ff84",
+      "name": "Token  - resource"
+    },
+    {
+      "parameters": {
+        "url": "=https://uerbhdyqpmyfztyaieht.supabase.co/rest/v1/tank_requests?custom_id=eq.{{ $('Order ID - Date of attendance').item.json.custom_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Supa - Meta Token').item.json[\"Supa Token\"] }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "={{ $('Supa - Meta Token').item.json[\"Supa Token\"] }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3200,
+        400
+      ],
+      "id": "1d1a2dcc-6159-4b2c-8127-c24e2ea86b69",
+      "name": "Data from SupaB"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract values from webhook\nconst messageData = $('Approval client').first().json.body.entry[0].changes[0].value.messages[0];\nconst buttonId = messageData.interactive.button_reply.id;\n\n// Determine whatsapp_status from button\nlet whatsapp_status = \"unknown\";\nif (buttonId.startsWith(\"APPROVE-\")) {\n  whatsapp_status = \"APPROVE\";\n} else if (buttonId.startsWith(\"DECLINE-\")) {\n  whatsapp_status = \"DECLINE\";\n}\n\n// Extract custom_id\nconst rawCustomId = buttonId.replace(/^APPROVE-/, \"\").replace(/^DECLINE-/, \"\").replace(/^=+/, \"\").trim();\n\n// Extract tank_id as the full starting part: \"TANK ID:xxxxx\"\nconst tankIdMatch = rawCustomId.match(/^(TANK ID:\\d+)/);\nconst tank_id = tankIdMatch ? tankIdMatch[1] : \"UNKNOWN_TANK_ID\";\n\n// Extract sender phone number (WhatsApp user)\nconst whatsapp_sender = messageData.from;\n\n// Timestamp of response (Unix seconds)\nconst unixTimestamp = messageData.timestamp;\nconst timestampMs = parseInt(unixTimestamp) * 1000;\n\n// Convert to Peru local time (UTC-5)\nconst approvalDateUTC = new Date(timestampMs);\nconst offsetPeru = -5 * 60 * 60 * 1000;\nconst approvalDateLocal = new Date(approvalDateUTC.getTime() + offsetPeru);\n\n// Format: YYYY-MM-DD HH:mm:ss\nconst yyyy = approvalDateLocal.getFullYear();\nconst mm = String(approvalDateLocal.getMonth() + 1).padStart(2, '0');\nconst dd = String(approvalDateLocal.getDate()).padStart(2, '0');\nconst hh = String(approvalDateLocal.getHours()).padStart(2, '0');\nconst min = String(approvalDateLocal.getMinutes()).padStart(2, '0');\nconst ss = String(approvalDateLocal.getSeconds()).padStart(2, '0');\nconst whatsapp_response_time = `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;\n\n// Determine attention date (1 or 2 days later depending on hour)\nconst extraDays = approvalDateLocal.getHours() < 16 ? 1 : 2;\nconst attentionDateLocal = new Date(approvalDateLocal);\nattentionDateLocal.setDate(attentionDateLocal.getDate() + extraDays);\n\n// Format YYYY-MM-DD\nconst order_attention_date = `${attentionDateLocal.getFullYear()}-${String(attentionDateLocal.getMonth() + 1).padStart(2, '0')}-${String(attentionDateLocal.getDate()).padStart(2, '0')}`;\n\n// Attention time window in UTC (7am–7pm Peru = 12:00–23:59 UTC)\nconst attentionStartUTC = new Date(Date.UTC(\n  attentionDateLocal.getFullYear(),\n  attentionDateLocal.getMonth(),\n  attentionDateLocal.getDate(),\n  12, 0, 0\n));\n\nconst attentionEndUTC = new Date(Date.UTC(\n  attentionDateLocal.getFullYear(),\n  attentionDateLocal.getMonth(),\n  attentionDateLocal.getDate(),\n  23, 59, 0\n));\n\nconst attention_start_unix = Math.floor(attentionStartUTC.getTime() / 1000);\nconst attention_end_unix = Math.floor(attentionEndUTC.getTime() / 1000);\n\n// Final output\nreturn [\n  {\n    json: {\n      whatsapp_status,\n      whatsapp_sender,\n      custom_id: rawCustomId,\n      tank_id,\n      whatsapp_response_time,\n      order_attention_date,\n      attention_start_unix,\n      attention_end_unix\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        940,
+        780
+      ],
+      "id": "8918d447-9b32-4f69-9b05-77a22d75974e",
+      "name": "Order ID - Date of attendance"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "57d04a09-0044-4a57-970f-1c0fa438cd16",
+              "name": "Name of the Order",
+              "value": "={{ $('Order ID - Date of attendance').item.json.tank_id }}",
+              "type": "string"
+            },
+            {
+              "id": "2f81669c-7ec8-4e89-8ebc-550eb44f40f6",
+              "name": "Address",
+              "value": "={{ $('Data from SupaB').item.json.address }}",
+              "type": "string"
+            },
+            {
+              "id": "a5d5bbf7-f595-426b-9786-0bd46126350a",
+              "name": "Latitude",
+              "value": "={{ $('Data from SupaB').item.json.latitude }}",
+              "type": "string"
+            },
+            {
+              "id": "d4f1b148-ae43-46bb-b2ce-8ab7467239e5",
+              "name": "Longitud",
+              "value": "={{ $('Data from SupaB').item.json.longitude }}",
+              "type": "string"
+            },
+            {
+              "id": "5d9740b1-16fc-4d11-8e87-739fc9b387e4",
+              "name": "Beggining",
+              "value": "={{ $('Order ID - Date of attendance').item.json.attention_start_unix }}",
+              "type": "string"
+            },
+            {
+              "id": "9028bb6a-c81f-4605-92f3-e9e6300c6569",
+              "name": "End",
+              "value": "={{ $('Order ID - Date of attendance').item.json.attention_end_unix }}",
+              "type": "string"
+            },
+            {
+              "id": "999c07a8-bd63-49aa-9bdf-2151ed699bb5",
+              "name": "Resource",
+              "value": "={{ $('Token  - resource').item.json['RESOURCE ID'] }}",
+              "type": "string"
+            },
+            {
+              "id": "9a343843-10b6-40ea-8930-b71d1323d312",
+              "name": "Client",
+              "value": "={{ $('Data from SupaB').item.json.approver_name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4140,
+        400
+      ],
+      "id": "695d2ede-5acb-4755-9321-8b3ed9cdd98e",
+      "name": "Data to Order"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5c55592d-c251-4c88-9530-3af8c37d5259",
+              "leftValue": "={{ $json.body.entry[0].changes[0].value.messages && $json.body.entry[0].changes[0].value.messages[0].interactive ? \"yes\" : \"no\" }}",
+              "rightValue": "yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        460,
+        940
+      ],
+      "id": "8edcd9e2-5704-4058-9e94-e9dd15cb1ef5",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://uerbhdyqpmyfztyaieht.supabase.co/rest/v1/tank_requests",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apiKey",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlcmJoZHlxcG15Znp0eWFpZWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NTQ0MTksImV4cCI6MjA1ODMzMDQxOX0.cd_g2ecDxHNu_Ax6J_E1A5eowBYwcUWDY_a7Sdr4pig"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlcmJoZHlxcG15Znp0eWFpZWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NTQ0MTksImV4cCI6MjA1ODMzMDQxOX0.cd_g2ecDxHNu_Ax6J_E1A5eowBYwcUWDY_a7Sdr4pig"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "body": "={\n  \"timestamp\": \"{{ $json.timestamp }}\",\n  \"tank_id\": \"{{ $json.tank_id }}\",\n  \"tank_level\": \"{{ $json.tank_level }}\",\n  \"latitude\": \"{{ $json.latitude }}\",\n  \"longitude\": \"{{ $json.longitude }}\",\n  \"address\": \"{{ $json.address }}\",\n  \"approver_name\": \"{{ $json.approver_name }}\",\n  \"approver_phone\": \"{{ $json.approver_phone }}\",\n  \"custom_id\": \"{{ $json.custom_id }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        420,
+        0
+      ],
+      "id": "20d6b2e5-0062-4aa5-92b1-9e620b39e6e2",
+      "name": "To SupaBase"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = items[0].json.body;\nconst raw = Object.keys(body)[0];\nconst parts = raw.split(\";\");\n\nconst levelString = parts[2].replace(\" l\", \"\").trim();\nconst levelNumber = Math.round(parseFloat(levelString));\n\nconst customId = `${parts[1]}-${Date.now()}`; // Ej: \"TANK48569-1711234567890\"\n\nreturn [\n  {\n    json: {\n      timestamp: parts[0],\n      tank_id: parts[1],\n      tank_level: `${levelNumber}%`,\n      latitude: parts[3],\n      longitude: parts[4],\n      address: parts[5],\n      approver_name: parts[6].toString().trim().replace(/^=/, \"\"),\n      approver_phone: parts[7].toString().trim().replace(/^=/, \"\"),\n      custom_id: customId  // ← Aquí lo agregas\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        200,
+        0
+      ],
+      "id": "9dbd2729-9e29-4e30-bde9-4c6a8132c316",
+      "name": "Webhook Processor"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v19.0/619806111209539/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $json['token meta'] }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{ $('Webhook Processor').item.json.approver_phone }}\",\n  \"type\": \"interactive\",\n  \"interactive\": {\n    \"type\": \"button\",\n    \"body\": {\n      \"text\": \"Hello {{ $('Webhook Processor').item.json.approver_name }} 👋. Your tank today {{ $('Webhook Processor').item.json.timestamp }} is at {{ $('Webhook Processor').item.json.tank_level }}. Do you approve the refill for tank {{ $('Webhook Processor').item.json.tank_id }}?\"\n    },\n    \"action\": {\n      \"buttons\": [\n        {\n          \"type\": \"reply\",\n          \"reply\": {\n            \"id\": \"APPROVE-{{ $('Webhook Processor').item.json.custom_id }}\",\n            \"title\": \"APPROVE\"\n          }\n        },\n        {\n          \"type\": \"reply\",\n          \"reply\": {\n            \"id\": \"DECLINE-{{ $('Webhook Processor').item.json.custom_id }}\",\n            \"title\": \"DECLINE\"\n          }\n        }\n      ]\n    }\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        900,
+        0
+      ],
+      "id": "6d3e89d8-1629-4d86-a94b-6dc8386e8843",
+      "name": "1st Message to Whatsapp"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8495957a-4982-4a12-b555-0832663d1c0d",
+              "name": "token meta",
+              "value": "EAASpbWuvnTIBO0zgCLBRCCiDkS4LfUBWjmdr2JAV1eS2WZBZA9ZCQsivNwStwcBcrVZBN5zUSCOJTtOhPLOvu8fTqlECxA9Xgy8gGIczeZCi60rg0i25oweJ2hOXO4ecfTnIDtloUVyHL9i3exR5gNUSiepIIABC6LcuDUBwrgOr5vrmHHJT0ZBbz3akeZAsUZAvdbVmVeZAV9evd1Q7LDKGrZC4ABDhgZD",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        640,
+        0
+      ],
+      "id": "bc69bedd-f7c7-4dab-a482-25d4bd190756",
+      "name": "Token Meta"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9ba1215f-b2a3-4254-bd49-2954a912ab4d",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "APPROVE",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2080,
+        600
+      ],
+      "id": "af75bd32-3bd9-46d6-ae1d-dea562117723",
+      "name": "Check previous response"
+    },
+    {
+      "parameters": {
+        "url": "=https://uerbhdyqpmyfztyaieht.supabase.co/rest/v1/tank_requests?custom_id=eq.{{ $('Order ID - Date of attendance').item.json.custom_id }}&select=status,whatsapp_response_time",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Supa - Meta Token').item.json[\"Supa Token\"] }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Supa - Meta Token').item.json[\"Supa Token\"] }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2700,
+        820
+      ],
+      "id": "edf530d7-9336-4b90-b46d-ea63e400fe9b",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "14ea6daa-c6f7-4e4f-85e8-0f7e3be6ee45",
+              "name": "Supa Token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlcmJoZHlxcG15Znp0eWFpZWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NTQ0MTksImV4cCI6MjA1ODMzMDQxOX0.cd_g2ecDxHNu_Ax6J_E1A5eowBYwcUWDY_a7Sdr4pig",
+              "type": "string"
+            },
+            {
+              "id": "51c5457b-c991-4635-b6be-216334eaa273",
+              "name": "Meta token",
+              "value": "EAASpbWuvnTIBO0zgCLBRCCiDkS4LfUBWjmdr2JAV1eS2WZBZA9ZCQsivNwStwcBcrVZBN5zUSCOJTtOhPLOvu8fTqlECxA9Xgy8gGIczeZCi60rg0i25oweJ2hOXO4ecfTnIDtloUVyHL9i3exR5gNUSiepIIABC6LcuDUBwrgOr5vrmHHJT0ZBbz3akeZAsUZAvdbVmVeZAV9evd1Q7LDKGrZC4ABDhgZD",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        740,
+        780
+      ],
+      "id": "fb04cc6d-ee33-4287-8184-b66350652ef6",
+      "name": "Supa - Meta Token"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v19.0/619806111209539/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Supa - Meta Token').item.json[\"Meta token\"] }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{$('Order ID - Date of attendance').item.json.whatsapp_sender}}\",\n  \"type\": \"text\",\n  \"text\": {\n    \"body\": \"Your request was *{{$('Check Status in SupaBase').item.json.status}}* at {{ $json.whatsapp_formatted_response_time }}. To change the answer please contact your sales agent.\"\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3300,
+        820
+      ],
+      "id": "284e284a-d601-4e8b-9fc7-4ad2bd8a0cc4",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "url": "=https://uerbhdyqpmyfztyaieht.supabase.co/rest/v1/tank_requests?custom_id=eq.{{ $('Order ID - Date of attendance').item.json.custom_id }}&select=status",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Supa - Meta Token').item.json['Supa Token'] }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Supa - Meta Token').item.json['Supa Token'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1840,
+        600
+      ],
+      "id": "29b153c9-a4a7-4fec-8799-7cf016b742bb",
+      "name": "Check Status in SupaBase"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawTime = new Date($json.whatsapp_response_time); // Ya en hora Perú, no tocar\n\nconst yyyy = rawTime.getFullYear();\nconst mm = String(rawTime.getMonth() + 1).padStart(2, '0');\nconst dd = String(rawTime.getDate()).padStart(2, '0');\nconst hh = String(rawTime.getHours()).padStart(2, '0');\nconst min = String(rawTime.getMinutes()).padStart(2, '0');\nconst ss = String(rawTime.getSeconds()).padStart(2, '0');\n\nconst formatted = `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;\n\nreturn [{ json: { whatsapp_formatted_response_time: formatted } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3000,
+        820
+      ],
+      "id": "82097987-c997-460f-af80-7f3f56fc1fac",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v19.0/619806111209539/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Supa - Meta Token').item.json[\"Meta token\"] }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{ $('Approval client').item.json.body.entry[0].changes[0].value.contacts[0].wa_id }}\",\n  \"type\": \"text\",\n  \"text\": {\n    \"body\": \"✅ Your request has been approved. The refill for tank {{ $('Order ID - Date of attendance').item.json.tank_id }} will be scheduled for {{ $('Order ID - Date of attendance').item.json.order_attention_date }} ⏳.\"\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2940,
+        400
+      ],
+      "id": "b0ae6583-e3ab-4583-a93a-2fae741b927f",
+      "name": "Whatsapp Acceptance msg"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v19.0/619806111209539/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Supa - Meta Token').item.json[\"Meta token\"] }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{ $('Approval client').item.json.body.entry[0].changes[0].value.contacts[0].wa_id }}\",\n  \"type\": \"text\",\n  \"text\": {\n    \"body\": \"✅ Your request has been denied.\"\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2940,
+        640
+      ],
+      "id": "87b3ec11-3daa-49dc-a62f-b577a78f14c1",
+      "name": "Whatsapp Denied msg"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "894d0806-1a8f-4778-ae30-ac623465fd11",
+              "leftValue": "={{ $('Order ID - Date of attendance').item.json.whatsapp_status }}",
+              "rightValue": "APPROVE",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2300,
+        500
+      ],
+      "id": "9e40d0cf-801a-4c44-8235-e2c8567330bb",
+      "name": "APPROVE - DECLINE"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://uerbhdyqpmyfztyaieht.supabase.co/rest/v1/tank_requests?custom_id=eq.{{ $('Order ID - Date of attendance').item.json.custom_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Supa - Meta Token').item.json[\"Supa Token\"] }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Supa - Meta Token').item.json[\"Supa Token\"] }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"status\": \"{{ $('Order ID - Date of attendance').item.json.whatsapp_status }}\",\n  \"whatsapp_response_time\": \"{{ $('Order ID - Date of attendance').item.json.whatsapp_response_time }}\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2700,
+        400
+      ],
+      "id": "725ad88a-de3a-4891-9875-23fb32f2e5b7",
+      "name": "Update APPROVE Status - Response time"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://uerbhdyqpmyfztyaieht.supabase.co/rest/v1/tank_requests?custom_id=eq.{{ $('Order ID - Date of attendance').item.json.custom_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Supa - Meta Token').item.json[\"Supa Token\"] }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Supa - Meta Token').item.json[\"Supa Token\"] }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"status\": \"{{ $('Order ID - Date of attendance').item.json.whatsapp_status }}\",\n  \"whatsapp_response_time\": \"{{ $('Order ID - Date of attendance').item.json.whatsapp_response_time }}\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2720,
+        640
+      ],
+      "id": "d5e8960c-1c7e-4aa2-b546-268d7c8e572c",
+      "name": "Update DENIED Status - Response time1"
+    },
+    {
+      "parameters": {
+        "url": "=https://uerbhdyqpmyfztyaieht.supabase.co/rest/v1/tank_requests?custom_id=eq.{{ $('Order ID - Date of attendance').item.json.custom_id }}&select=timestamp",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Supa - Meta Token').item.json[\"Supa Token\"] }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "={{ $('Supa - Meta Token').item.json[\"Supa Token\"] }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1180,
+        780
+      ],
+      "id": "032ee6b6-f152-446d-a871-0f12ddbaf875",
+      "name": "TimeStamp SupaBase"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtener timestamp de WhatsApp (en formato ISO)\nconst whatsappTimestampStr = $('Order ID - Date of attendance').first().json.whatsapp_response_time;\nconst whatsappDate = new Date(whatsappTimestampStr);\n\n// Obtener timestamp de Supabase (formato \"DD.MM.YYYY HH:mm:ss\")\nconst dbTimestampStr = $input.first().json.timestamp;\n\n// Convertir manualmente a objeto Date\nconst [datePart, timePart] = dbTimestampStr.split(' ');\nconst [day, month, year] = datePart.split('.');\nconst [hour, minute, second] = timePart.split(':');\n\nconst dbDate = new Date(\n  parseInt(year),           // Año\n  parseInt(month) - 1,      // Mes (0-indexed)\n  parseInt(day),            // Día\n  parseInt(hour),\n  parseInt(minute),\n  parseInt(second)\n);\n\n// Calcular diferencia en milisegundos\nconst diffMs = whatsappDate.getTime() - dbDate.getTime();\n\n// Convertir a segundos\nconst diffSeconds = Math.round(diffMs / 1000);\n\nreturn [\n  {\n    json: {\n      difference_seconds: diffSeconds\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1380,
+        780
+      ],
+      "id": "a7c63b8f-ba71-44ec-a049-c18b12be4dfe",
+      "name": "Response vs Notification time"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "71260269-3d1b-4a8a-a860-3c249aba240b",
+              "leftValue": "={{ $json.difference_seconds }}",
+              "rightValue": 86400,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1560,
+        780
+      ],
+      "id": "9afb37d3-f4e1-4132-9918-7515b96c873c",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://uerbhdyqpmyfztyaieht.supabase.co/rest/v1/tank_requests?custom_id=eq.{{ $('Order ID - Date of attendance').item.json.custom_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Supa - Meta Token').item.json[\"Supa Token\"] }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Supa - Meta Token').item.json[\"Supa Token\"] }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"order_status\": \"scheduled\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4700,
+        400
+      ],
+      "id": "910a8dfa-c881-4675-8840-e37cc957d99c",
+      "name": "Update Order Status"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "drebrown2726.app.n8n.cloud",
+            "user-agent": "adf_http_client/4.3.0205",
+            "content-length": "189",
+            "accept": "*/*",
+            "accept-encoding": "gzip, br",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "77.74.50.76",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "NL",
+            "cf-ray": "925a4e66b26666b8-AMS",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/x-www-form-urlencoded; charset=utf-8",
+            "x-forwarded-for": "77.74.50.76, 172.71.99.84",
+            "x-forwarded-host": "drebrown2726.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-17-7798f56955-nfvkw",
+            "x-is-trusted": "yes",
+            "x-real-ip": "77.74.50.76"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "24.03.2025 19:31:31;TANK ID:48569;20.00 l;-8.138271244824582;-79.01283086372364;17LQL1895299878 1N, Trujillo, La Libertad, Peru;Franco Cortez;51956376432": ""
+          },
+          "webhookUrl": "https://drebrown2726.app.n8n.cloud/webhook/6f15c50f-4ab0-4553-a000-89d097632e21",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Webhook Processor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "verify_token": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approval client": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Session ID": {
+      "main": [
+        [
+          {
+            "node": "Data to Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Token  - resource": {
+      "main": [
+        [
+          {
+            "node": "Session ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data from SupaB": {
+      "main": [
+        [
+          {
+            "node": "Token  - resource",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Order ID - Date of attendance": {
+      "main": [
+        [
+          {
+            "node": "TimeStamp SupaBase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data to Order": {
+      "main": [
+        [
+          {
+            "node": "Creating order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Supa - Meta Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "To SupaBase": {
+      "main": [
+        [
+          {
+            "node": "Token Meta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Processor": {
+      "main": [
+        [
+          {
+            "node": "To SupaBase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Token Meta": {
+      "main": [
+        [
+          {
+            "node": "1st Message to Whatsapp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check previous response": {
+      "main": [
+        [
+          {
+            "node": "APPROVE - DECLINE",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supa - Meta Token": {
+      "main": [
+        [
+          {
+            "node": "Order ID - Date of attendance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Status in SupaBase": {
+      "main": [
+        [
+          {
+            "node": "Check previous response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Whatsapp Acceptance msg": {
+      "main": [
+        [
+          {
+            "node": "Data from SupaB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "APPROVE - DECLINE": {
+      "main": [
+        [
+          {
+            "node": "Update APPROVE Status - Response time",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update DENIED Status - Response time1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update APPROVE Status - Response time": {
+      "main": [
+        [
+          {
+            "node": "Whatsapp Acceptance msg",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update DENIED Status - Response time1": {
+      "main": [
+        [
+          {
+            "node": "Whatsapp Denied msg",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TimeStamp SupaBase": {
+      "main": [
+        [
+          {
+            "node": "Response vs Notification time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response vs Notification time": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Check Status in SupaBase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Creating order": {
+      "main": [
+        [
+          {
+            "node": "Update Order Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8d17e314-9046-42f9-b69b-2e8c6a78debf",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c9f675b8ddd1fa90ce3955263518d531a08f0110a909fc139fe1a3d661f5dd78"
+  },
+  "id": "wvvCTj4MKfrp0Bsm",
+  "tags": []
+}
